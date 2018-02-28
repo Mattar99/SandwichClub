@@ -4,16 +4,26 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.udacity.sandwichclub.model.Sandwich;
 import com.udacity.sandwichclub.utils.JsonUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_POSITION = "extra_position";
     private static final int DEFAULT_POSITION = -1;
+
+
+    private TextView origin;
+    private TextView description;
+    private TextView ingredients;
+    private TextView alsoKnownAs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +48,7 @@ public class DetailActivity extends AppCompatActivity {
         String json = sandwiches[position];
         Sandwich sandwich = JsonUtils.parseSandwichJson(json);
 
-        
+
 
         if (sandwich == null) {
             // Sandwich data unavailable
@@ -46,7 +56,7 @@ public class DetailActivity extends AppCompatActivity {
             return;
         }
 
-        populateUI();
+        populateUI(sandwich);
         Picasso.with(this)
                 .load(sandwich.getImage())
                 .into(ingredientsIv);
@@ -59,7 +69,45 @@ public class DetailActivity extends AppCompatActivity {
         Toast.makeText(this, R.string.detail_error_message, Toast.LENGTH_SHORT).show();
     }
 
-    private void populateUI() {
+    private void populateUI(Sandwich sandwich) {
 
+        origin       = findViewById(R.id.origin_tv);
+        description  = findViewById(R.id.description_tv);
+        alsoKnownAs  = findViewById(R.id.also_known_tv);
+        ingredients  = findViewById(R.id.ingredients_tv);
+
+        if(!sandwich.getPlaceOfOrigin().isEmpty())
+            origin.setText(sandwich.getPlaceOfOrigin());
+        else
+            origin.setText(R.string.no_information);
+
+        if(!sandwich.getDescription().isEmpty())
+            description.setText(sandwich.getDescription());
+        else
+            description.setText(R.string.no_information);
+
+        if(!sandwich.getAlsoKnownAs().isEmpty())
+            alsoKnownAs.setText(splitList(sandwich.getAlsoKnownAs()));
+        else
+            alsoKnownAs.setText(R.string.no_information);
+
+        if(!sandwich.getIngredients().isEmpty())
+            ingredients.setText(splitList(sandwich.getIngredients()));
+        else
+            ingredients.setText(R.string.no_information);
+        
+        
+
+
+    }
+
+
+    private String splitList(List<String> list){
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String current:list) {
+
+            stringBuilder.append(current+"\n");
+        }
+        return stringBuilder.toString();
     }
 }
