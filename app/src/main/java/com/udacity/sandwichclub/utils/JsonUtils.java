@@ -34,14 +34,14 @@ public class JsonUtils {
         try {
             JSONObject wholeObject = new JSONObject(json);
 
-            placeOfOrigin = wholeObject.getString(sandwich_PlaceOfOrigin);
-            description   = wholeObject.getString(sandwich_Description);
-            image         = wholeObject.getString(sandwich_Image);
+            placeOfOrigin = wholeObject.optString(sandwich_PlaceOfOrigin);
+            description   = wholeObject.optString(sandwich_Description);
+            image         = wholeObject.optString(sandwich_Image);
             ingredients   = JSONArrayToList(wholeObject.getJSONArray(sandwich_Ingredients));
 
             JSONObject nameObject = wholeObject.getJSONObject(sandwich_Name);
 
-            mainName    = nameObject.getString(sandwich_MainName);
+            mainName    = nameObject.optString(sandwich_MainName);
             alsoKnownAs = JSONArrayToList(nameObject.getJSONArray(sandwich_AlsoKnownAs));
 
 

@@ -1,8 +1,10 @@
 package com.udacity.sandwichclub;
 
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,23 +16,37 @@ import com.udacity.sandwichclub.utils.JsonUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class DetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_POSITION = "extra_position";
     private static final int DEFAULT_POSITION = -1;
 
+    @BindView(R.id.origin_tv)
+     TextView origin;
 
-    private TextView origin;
-    private TextView description;
-    private TextView ingredients;
-    private TextView alsoKnownAs;
+    @BindView(R.id.also_known_tv)
+     TextView alsoKnownAs;
+
+    @BindView(R.id.description_tv)
+     TextView description;
+
+    @BindView(R.id.ingredients_tv)
+     TextView ingredients;
+
+    @BindView(R.id.image_iv)
+     ImageView ingredientsIv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        ImageView ingredientsIv = findViewById(R.id.image_iv);
+        ButterKnife.bind(this);
+
+
 
         Intent intent = getIntent();
         if (intent == null) {
@@ -59,7 +75,11 @@ public class DetailActivity extends AppCompatActivity {
         populateUI(sandwich);
         Picasso.with(this)
                 .load(sandwich.getImage())
+                .error(R.drawable.placeholder_or_error)
+                .placeholder(R.drawable.placeholder_or_error)
                 .into(ingredientsIv);
+
+
 
         setTitle(sandwich.getMainName());
     }
@@ -70,11 +90,6 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void populateUI(Sandwich sandwich) {
-
-        origin       = findViewById(R.id.origin_tv);
-        description  = findViewById(R.id.description_tv);
-        alsoKnownAs  = findViewById(R.id.also_known_tv);
-        ingredients  = findViewById(R.id.ingredients_tv);
 
         if(!sandwich.getPlaceOfOrigin().isEmpty())
             origin.setText(sandwich.getPlaceOfOrigin());
@@ -87,12 +102,12 @@ public class DetailActivity extends AppCompatActivity {
             description.setText(R.string.no_information);
 
         if(!sandwich.getAlsoKnownAs().isEmpty())
-            alsoKnownAs.setText(splitList(sandwich.getAlsoKnownAs()));
+            alsoKnownAs.setText(TextUtils.join("\n",sandwich.getAlsoKnownAs()));
         else
             alsoKnownAs.setText(R.string.no_information);
 
         if(!sandwich.getIngredients().isEmpty())
-            ingredients.setText(splitList(sandwich.getIngredients()));
+            ingredients.setText(TextUtils.join("\n",sandwich.getIngredients()));
         else
             ingredients.setText(R.string.no_information);
         
@@ -102,12 +117,5 @@ public class DetailActivity extends AppCompatActivity {
     }
 
 
-    private String splitList(List<String> list){
-        StringBuilder stringBuilder = new StringBuilder();
-        for (String current:list) {
 
-            stringBuilder.append(current+"\n");
-        }
-        return stringBuilder.toString();
-    }
 }
